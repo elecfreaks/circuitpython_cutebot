@@ -1,15 +1,13 @@
 import board
 import digitalio
-import analogio
-import microcontroller
 from picoed import *
 import time
 import pulseio
 
 class RGB():
     """RGB enum"""
-    left = 0x08
-    right = 0x04
+    left = 0x04
+    right = 0x08
 
 class Servo():
     """servo enum"""
@@ -25,7 +23,7 @@ class Cutebot():
     """Supports the Pico:ed cutebot by ELECFREAKS"""
 
     def __init__(self):
-        self._cutebot_address = 0x10
+        self._address = 0x10
         self._tracking_pin_L = digitalio.DigitalInOut(board.P13)
         self._tracking_pin_L.direction = digitalio.Direction.INPUT
         self._tracking_pin_R = digitalio.DigitalInOut(board.P14)
@@ -53,22 +51,22 @@ class Cutebot():
         if not i2c.try_lock():
             i2c.unlock()
         else:
-            i2c.writeto(self._cutebot_address, left_buffer)
-            i2c.writeto(self._cutebot_address, right_buffer)
+            i2c.writeto(self._address, left_buffer)
+            i2c.writeto(self._address, right_buffer)
             i2c.unlock()
 
-    def set_light(self, light_num:int, rgb_r:int, rgb_g:int, rgb_b:int):
+    def set_light(self, light_num:RGB, rgb_r, rgb_g, rgb_b):
         """Set the RGB light"""
         if rgb_r < 0 or rgb_r > 255 or rgb_g < 0 or rgb_g > 255 or rgb_b < 0 or rgb_b > 255:
             raise ValueError('RGB parameter error,0~255')
         if light_num == RGB.left or light_num == RGB.right:
             rgb_buffer = bytearray([light_num, rgb_r, rgb_g, rgb_b])
         else:
-            raise ValueError('light select error,please select left or right.')
+            raise ValueError('light select error,please select RGB.left or RGB.right.')
         if not i2c.try_lock():
             i2c.unlock()
         else:
-            i2c.writeto(self._cutebot_address, rgb_buffer)
+            i2c.writeto(self._address, rgb_buffer)
             i2c.unlock()
 
     def get_distance(self, unit:Unit):
@@ -112,7 +110,7 @@ class Cutebot():
         elif not left_value and not right_value:
             return 0
 
-    def set_servo(self, servo_num:Servo, angle:int):
+    def set_servo(self, servo_num:Servo, angle):
         """Set servo angle"""
         if angle > 180 or angle < 0:
             raise ValueError('angle parameter error,0~180')
@@ -127,5 +125,5 @@ class Cutebot():
         if not i2c.try_lock():
             i2c.unlock()
         else:
-            i2c.writeto(self._cutebot_address, servo_buffer)
+            i2c.writeto(self._address, servo_buffer)
             i2c.unlock()
