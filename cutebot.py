@@ -29,6 +29,9 @@ class Cutebot():
         self._tracking_pin_R = digitalio.DigitalInOut(board.P14)
         self._tracking_pin_R.direction = digitalio.Direction.INPUT
         self.distance = 0
+        self.set_speed(0, 0)
+        self.set_light(RGB.left, 0, 0, 0)
+        self.set_light(RGB.right, 0, 0, 0)
 
     def set_speed(self, left_speed, right_speed):
         """Set the speed of the car's left wheel and right wheel"""
