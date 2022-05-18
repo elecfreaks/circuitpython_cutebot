@@ -1,8 +1,10 @@
+import time
 import board
 import digitalio
-from picoed import *
-import time
 import pulseio
+import neopixel
+import adafruit_irremote
+from picoed import *
 
 class RGB():
     """RGB enum"""
@@ -32,6 +34,7 @@ class Cutebot():
         self.set_speed(0, 0)
         self.set_light(RGB.left, 0, 0, 0)
         self.set_light(RGB.right, 0, 0, 0)
+        self._rainbow_leds = None
 
     def set_speed(self, left_speed, right_speed):
         """Set the speed of the car's left wheel and right wheel"""
@@ -130,3 +133,79 @@ class Cutebot():
         else:
             i2c.writeto(self._address, servo_buffer)
             i2c.unlock()
+
+    def get_ir_value(self):
+        pulsein = pulseio.PulseIn(board.P16, maxlen=120, idle_state=True)
+        decoder = adafruit_irremote.GenericDecode()
+        pulses = decoder.read_pulses(pulsein)
+        pulsein.clear()
+        pulsein.deinit()
+        try:
+            code = decoder.decode_bits(pulses)
+            if code[0] == 255 and code[1] == 0:
+                if code[3] == 162:
+                    return 11
+                elif code[3] == 98:
+                    return 12
+                elif code[3] == 226:
+                    return 13
+                elif code[3] == 34:
+                    return 14
+                elif code[3] == 2:
+                    return 15
+                elif code[3] == 194:
+                    return 16
+                elif code[3] == 224:
+                    return 17
+                elif code[3] == 168:
+                    return 18
+                elif code[3] == 144:
+                    return 19
+                elif code[3] == 104:
+                    return 0
+                elif code[3] == 152:
+                    return 100
+                elif code[3] == 176:
+                    return 200
+                elif code[3] == 48:
+                    return 1
+                elif code[3] == 24:
+                    return 2
+                elif code[3] == 122:
+                    return 3
+                elif code[3] == 16:
+                    return 4
+                elif code[3] == 56:
+                    return 5
+                elif code[3] == 90:
+                    return 6
+                elif code[3] == 66:
+                    return 7
+                elif code[3] == 74:
+                    return 8
+                elif code[3] == 82:
+                    return 9
+        except:
+            return self.get_ir_value()
+
+    @property
+    def rainbow_leds(self):
+        """Access rainbow_leds instance"""
+        if self._rainbow_leds is None:
+            raise AttributeError("rainbow_leds not initialized, " +
+                                 "call init_rainbow_leds to initialize.")
+        return self._rainbow_leds
+
+    def init_rainbow_leds(self, brightness=1.0, auto_write=True):
+        """
+        initialize rainbow_leds
+
+        Args:
+            brightness (float, optional): Brightness of the pixels between
+                0.0 and 1.0 where 1.0 is full brightness. Defaults to 1.0.
+            auto_write (bool, optional): True if the neopixels should
+                immediately change when set. If False, `show` must be called
+                explicitly.. Defaults to True.
+        """
+        self._rainbow_leds = neopixel.NeoPixel(
+            board.P15, 2, brightness=brightness, auto_write=auto_write)
