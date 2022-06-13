@@ -84,11 +84,19 @@ class Cutebot():
         _ultrasonic_trig.value = False
         _ultrasonic_trig.deinit()
         _ultrasonic_echo = pulseio.PulseIn(board.P12)
-        while len(_ultrasonic_echo) == 0:
-            pass
-        _ultrasonic_echo.pause()
-        distance_now = _ultrasonic_echo.popleft() * 34 / 2 / 1000 + 7
-        _ultrasonic_echo.clear()
+        time_out = 0
+        while len(_ultrasonic_echo) == 0 and time_out <= 5000:
+            time_out += 1
+        if time_out > 8000:
+            _ultrasonic_echo.deinit()
+            return self.get_distance(unit)
+        try:
+            _ultrasonic_echo.pause()
+            distance_now = _ultrasonic_echo.popleft() * 34 / 2 / 1000 + 7
+            _ultrasonic_echo.clear()
+        except:
+            _ultrasonic_echo.deinit()
+            return self.get_distance(unit)
         _ultrasonic_echo.deinit()
         if distance_now >= 1121:
             if self.distance != 0:
