@@ -150,49 +150,51 @@ class Cutebot():
         pulsein.deinit()
         try:
             code = decoder.decode_bits(pulses)
-            if code[0] == 255 and code[1] == 0:
-                if code[3] == 162:
+            if code[0] == 255 and code[1] == 2:
+                if code[3] == 0:
                     return 11
-                elif code[3] == 98:
+                elif code[3] == 64:
                     return 12
-                elif code[3] == 226:
+                elif code[3] == 32:
                     return 13
-                elif code[3] == 34:
+                elif code[3] == 160:
                     return 14
-                elif code[3] == 2:
+                elif code[3] == 96:
                     return 15
-                elif code[3] == 194:
-                    return 16
-                elif code[3] == 224:
-                    return 17
-                elif code[3] == 168:
-                    return 18
-                elif code[3] == 144:
-                    return 19
-                elif code[3] == 104:
-                    return 0
-                elif code[3] == 152:
-                    return 100
-                elif code[3] == 176:
-                    return 200
-                elif code[3] == 48:
-                    return 1
-                elif code[3] == 24:
-                    return 2
-                elif code[3] == 122:
-                    return 3
                 elif code[3] == 16:
+                    return 16
+                elif code[3] == 144:
+                    return 17
+                elif code[3] == 80:
+                    return 18
+                elif code[3] == 48:
+                    return 19
+                elif code[3] == 176:
+                    return 20
+                elif code[3] == 112:
+                    return 0
+                elif code[3] == 8:
+                    return 1
+                elif code[3] == 136:
+                    return 2
+                elif code[3] == 72:
+                    return 3
+                elif code[3] == 40:
                     return 4
-                elif code[3] == 56:
+                elif code[3] == 168:
                     return 5
-                elif code[3] == 90:
+                elif code[3] == 104:
                     return 6
-                elif code[3] == 66:
+                elif code[3] == 24:
                     return 7
-                elif code[3] == 74:
+                elif code[3] == 152:
                     return 8
-                elif code[3] == 82:
+                elif code[3] == 88:
                     return 9
+                else:
+                    return self.get_ir_value()
+            else:
+                return self.get_ir_value()
         except:
             return self.get_ir_value()
 
