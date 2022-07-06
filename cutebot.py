@@ -116,13 +116,13 @@ class Cutebot():
         left_value = self._tracking_pin_L.value
         right_value = self._tracking_pin_R.value
         if left_value and right_value:
-            return 11
+            return "00"
         elif not left_value and right_value:
-            return 10
+            return "10"
         elif left_value and not right_value:
-            return 1
+            return "01"
         elif not left_value and not right_value:
-            return 0
+            return "11"
 
     def set_servo(self, servo_num:Servo, angle):
         """Set servo angle"""
